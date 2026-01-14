@@ -1,16 +1,29 @@
+"""
+Main entry point for the Task API application.
+
+This module initializes the FastAPI app and includes all API
+routers for task management. It serves as the starting point
+for running the server using Uvicorn.
+
+Routers:
+    - /tasks: CRUD operations for Task entities
+"""
+
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from app.database import Base, engine
+from app.api.tasks import router as task_router
 
-from app.api.tasks import router as tasks_router
+app = FastAPI(title="Task API", version="1.0")
 
-app = FastAPI()
+app.include_router(task_router)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
-app.include_router(tasks_router)
+@app.on_event("startup")
+async def startup():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    await engine.dispose()
