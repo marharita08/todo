@@ -56,15 +56,17 @@ class HttpService {
       headers,
       body: config.body ? JSON.stringify(config.body) : undefined,
     });
-    const body = (
-      response.headers.get('Content-Type')?.includes('application/json')
-        ? await response.json()
-        : await response.text()
-    ) as TResponse;
 
+    const contentType = response.headers.get("Content-Type");
+    const rawText = await response.text();
+
+    const body =
+      rawText && contentType?.includes("application/json")
+        ? (JSON.parse(rawText) as TResponse)
+        : (rawText as unknown as TResponse);
 
     if (!response.ok) {
-      throw new HttpException(response, body as { message: string })
+      throw new HttpException(response, body as { message: string });
     }
 
     return body;

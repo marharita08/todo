@@ -13,8 +13,6 @@ import {
 import { SortOrder, SortBy, CompletionStatus } from "@/const";
 import { Input } from "@/components/ui/input";
 import { SearchIcon } from "lucide-react";
-import { TaskResponse } from "@/types/task";
-import { TaskDetailsDialog } from "@/components/task-details-dialog";
 
 const getSortOrderToLabelMap = {
   [SortOrder.ASC]: "Ascending",
@@ -46,7 +44,7 @@ export const TasksGrid = () => {
     CompletionStatus.ALL,
   );
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.CREATED_AT);
-  const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.ASC);
+  const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.DESC);
   const [search, setSearch] = useState<string>("");
   const { data, isLoading, status, isError, isFetchingNextPage } = useTasks({
     isCompleted: getIsCompleted(completionStatus),
@@ -56,10 +54,6 @@ export const TasksGrid = () => {
     search,
   });
 
-  const [openTaskDetailsDialog, setOpenTaskDetailsDialog] =
-    useState<boolean>(false);
-  const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
-
   const isEmpty =
     !isError &&
     !isLoading &&
@@ -67,13 +61,6 @@ export const TasksGrid = () => {
 
   return (
     <div className="py-4 flex flex-col gap-6">
-      {selectedTask && (
-        <TaskDetailsDialog
-          open={openTaskDetailsDialog}
-          onOpenChange={setOpenTaskDetailsDialog}
-          task={selectedTask}
-        />
-      )}
       <div className="flex items-center gap-4">
         <Tabs
           value={completionStatus}
@@ -128,16 +115,7 @@ export const TasksGrid = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {data?.pages.map((page) =>
-          page.items.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onCardClick={(task) => {
-                setSelectedTask(task);
-                setOpenTaskDetailsDialog(true);
-              }}
-            />
-          )),
+          page.items.map((task) => <TaskCard key={task.id} task={task} />),
         )}
       </div>
       {isEmpty && (

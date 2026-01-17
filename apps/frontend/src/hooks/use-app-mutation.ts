@@ -44,12 +44,13 @@ export const useAppMutation = <
             variant: "destructive",
           });
         } else {
+          console.error(error);
           toast({
             title: "An unexpected error occurred",
             variant: "destructive",
           });
         }
-    }
+      }
 
       params.onError?.(error, variables, context, mutation);
     },

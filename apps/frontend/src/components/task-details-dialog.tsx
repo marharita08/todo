@@ -7,17 +7,17 @@ import { cn } from "@/utils/cn";
 
 interface TaskDetailsDialogProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onClose: () => void;
   task: TaskResponse;
 }
 
 export const TaskDetailsDialog: React.FC<TaskDetailsDialogProps> = ({
   open,
-  onOpenChange,
+  onClose,
   task,
 }) => {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-2xl">{task.title}</DialogTitle>
