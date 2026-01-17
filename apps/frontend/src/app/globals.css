@@ -3,30 +3,30 @@
 :root {
   /* Base */
   --background: 248 250 252; /* #F8FAFC */
-  --foreground: 15 23 42;    /* #0F172A */
+  --foreground: 15 23 42; /* #0F172A */
 
   /* Brand */
-  --primary: 79 70 229;      /* #4F46E5 */
+  --primary: 79 70 229; /* #4F46E5 */
   --primary-foreground: 255 255 255;
 
-  --secondary: 20 184 166;   /* #14B8A6 */
+  --secondary: 20 184 166; /* #14B8A6 */
   --secondary-foreground: 255 255 255;
 
-  --accent: 251 113 133;     /* #FB7185 */
+  --accent: 251 113 133; /* #FB7185 */
   --accent-foreground: 255 255 255;
 
   /* UI */
-  --muted: 226 232 240;      /* #E2E8F0 */
-  --muted-foreground: 100 116 139; /* #64748B */
+  --muted: 226 232 240; /* #E2E8F0 */
+  --muted-foreground: 30 38 57; /* #1E2639 */
 
   --border: 226 232 240;
   --input: 226 232 240;
-  --ring: 99 102 241;        /* #6366F1 */
+  --ring: 99 102 241; /* #6366F1 */
 
   /* Status */
-  --success: 34 197 94;      /* #22C55E */
-  --warning: 234 179 8;      /* #EAB308 */
-  --error: 239 68 68;        /* #EF4444 */
+  --success: 34 197 94; /* #22C55E */
+  --warning: 234 179 8; /* #EAB308 */
+  --error: 239 68 68; /* #EF4444 */
 }
 
 @theme {
@@ -43,11 +43,13 @@
   --color-accent: rgb(var(--accent));
   --color-accent-foreground: rgb(var(--accent-foreground));
 
+  --color-muted: rgb(var(--muted));
+  --color-muted-foreground: rgb(var(--muted-foreground));
+
   --color-success: rgb(var(--success));
   --color-warning: rgb(var(--warning));
   --color-error: rgb(var(--error));
 }
-
 
 body {
   background: var(--background);

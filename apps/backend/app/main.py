@@ -10,10 +10,23 @@ Routers:
 """
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from os import getenv
+
 from app.database import Base, engine
 from app.api.tasks import router as task_router
 
+origins = getenv("CORS_ORIGINS", "").split(",")
+
 app = FastAPI(title="Task API", version="1.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(task_router)
 

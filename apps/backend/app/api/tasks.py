@@ -5,11 +5,11 @@ This module defines all HTTP routes related to Task management,
 including creation, retrieval, update, and deletion of tasks.
 """
 
-from typing import List
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
+from app.schemas.pagination import PaginatedResponse
 from app.schemas.task import Task, TaskCreate, TaskUpdate
 from app.schemas.task_query import TaskQueryParams
 from app.services.dependencies import get_task_service
@@ -18,7 +18,7 @@ from app.services.task_service import TaskService
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
 
-@router.get("/", response_model=List[Task])
+@router.get("/", response_model=PaginatedResponse[Task])
 async def get_tasks(
     params: TaskQueryParams = Depends(),
     service: TaskService = Depends(get_task_service),

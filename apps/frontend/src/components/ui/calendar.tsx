@@ -27,8 +27,10 @@ function Calendar({
         day_button: "h-10 w-10 p-0 font-normal relative",
         selected: "bg-primary text-primary-foreground rounded-md",
         today: "bg-primary/10 text-primary font-semibold rounded-md",
-        range_start: "bg-primary text-primary-foreground rounded-none rounded-l-md",
-        range_end: "bg-primary text-primary-foreground rounded-none rounded-r-md",
+        range_start:
+          "bg-primary text-primary-foreground rounded-none rounded-l-md",
+        range_end:
+          "bg-primary text-primary-foreground rounded-none rounded-r-md",
         range_middle: "bg-primary/50 rounded-none",
         disabled: "opacity-50",
         outside: "opacity-30",

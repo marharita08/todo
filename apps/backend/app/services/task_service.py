@@ -5,16 +5,26 @@ This module provides the necessary service for the Task entity,
 including the task service and the database session.
 """
 
-from datetime import datetime, timezone
-from typing import List
+from datetime import datetime
 from uuid import UUID
+from math import ceil
 
-from sqlalchemy import and_, asc, desc, select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.task import Task as TaskModel
-from app.schemas.task import TaskCreate, TaskUpdate
+from app.schemas.task import TaskCreate, TaskUpdate, Task
 from app.schemas.task_query import TaskQueryParams
+from app.schemas.pagination import PaginatedResponse
+from app.schemas.task_sort_by import TaskSortBy
+
+
+SORT_FIELD_MAPPING = {
+    TaskSortBy.title: TaskModel.title,
+    TaskSortBy.createdAt: TaskModel.created_at,
+    TaskSortBy.priority: TaskModel.priority,
+    TaskSortBy.dueDate: TaskModel.due_date,
+}
 
 
 class TaskService:
@@ -28,45 +38,49 @@ class TaskService:
         """
         self.session = session
 
-    async def get_all(self, params: TaskQueryParams) -> List[TaskModel]:
+    async def get_all(self, params: TaskQueryParams):
         """
-        Get list of tasks with filters, sorting and pagination.
+        Get all tasks.
         """
         query = select(TaskModel)
 
-        if params.isCompleted is not None:
-            query = query.where(TaskModel.is_completed == params.isCompleted)
+        if params.is_completed is not None:
+            query = query.where(TaskModel.is_completed == params.is_completed)
 
-        if params.isOverdue is not None:
-            now = datetime.now(timezone.utc)
-
-            overdue_condition = and_(
+        if params.is_overdue:
+            query = query.where(
                 TaskModel.is_completed.is_(False),
-                TaskModel.due_date.is_not(None),
-                TaskModel.due_date < now,
+                TaskModel.due_date < datetime.utcnow(),
             )
 
-            if params.isOverdue:
-                query = query.where(overdue_condition)
-            else:
-                query = query.where(~overdue_condition)
+        sort_column = SORT_FIELD_MAPPING.get(
+            params.sort_by,
+            TaskModel.created_at,
+        )
+        if params.search:
+            query = query.where(TaskModel.title.ilike(f"%{params.search}%"))
 
-        sort_mapping = {
-            "title": TaskModel.title,
-            "createdAt": TaskModel.created_at,
-            "priority": TaskModel.priority,
-            "dueDate": TaskModel.due_date,
-        }
+        if params.sort_order == "desc":
+            query = query.order_by(sort_column.desc())
+        else:
+            query = query.order_by(sort_column.asc())
 
-        sort_column = sort_mapping[params.sortBy]
-        order_func = asc if params.sortOrder == "asc" else desc
-        query = query.order_by(order_func(sort_column))
+        total = await self.session.scalar(
+            select(func.count()).select_from(query.subquery())
+        )
 
-        offset = (params.page - 1) * params.pageSize
-        query = query.offset(offset).limit(params.pageSize)
+        query = query.offset((params.page - 1) * params.page_size).limit(params.page_size)
 
         result = await self.session.execute(query)
-        return result.scalars().all()
+        tasks = result.scalars().all()
+
+        return PaginatedResponse[Task](
+            items=tasks,
+            total_items=total,
+            page=params.page,
+            page_size=params.page_size,
+            total_pages=ceil(total / params.page_size),
+        )
 
     async def get_by_id(self, task_id: UUID) -> TaskModel | None:
         """

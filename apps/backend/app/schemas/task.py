@@ -36,6 +36,7 @@ class TaskBase(BaseModel):
         """
 
         populate_by_name = True
+        from_attributes = True
 
 
 class TaskCreate(TaskBase):
@@ -75,6 +76,7 @@ class TaskUpdate(BaseModel):
         """
 
         populate_by_name = True
+        from_attributes = True
 
 
 class Task(TaskBase):
@@ -97,3 +99,4 @@ class Task(TaskBase):
         """
 
         populate_by_name = True
+        from_attributes = True
