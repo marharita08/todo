@@ -99,6 +99,7 @@ export const UpdateTaskDialog: React.FC<UpdateTaskDialogProps> = ({
           <div>
             <DatePicker
               label="Due date"
+              initialValue={form.getValues("dueDate") ?? undefined}
               onChange={(date) => form.setValue("dueDate", date ?? null)}
               className="w-full"
             />

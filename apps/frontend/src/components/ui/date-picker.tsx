@@ -9,12 +9,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/utils/cn";
-import { CalendarIcon } from "lucide-react";
+import { CalendarDaysIcon } from "lucide-react";
 
-const DATE_FORMAT = "MMM d";
+const DATE_FORMAT = "MMM d, yyyy";
 
 interface DatePickerProps {
-  value?: Date;
+  initialValue?: Date;
   onChange: (date?: Date) => void;
   label?: string;
   className?: string;
@@ -24,7 +24,7 @@ interface DatePickerProps {
 }
 
 const DatePicker: React.FC<DatePickerProps> = ({
-  value,
+  initialValue,
   onChange,
   label,
   className,
@@ -33,9 +33,9 @@ const DatePicker: React.FC<DatePickerProps> = ({
   dateFormat = DATE_FORMAT,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(value);
+  const [date, setDate] = useState<Date | undefined>(initialValue);
   const [rawValue, setRawValue] = useState<string>("");
-  const [month, setMonth] = useState<Date | undefined>(value);
+  const [month, setMonth] = useState<Date | undefined>(initialValue);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const getExpectedLength = (format: string) => {
@@ -119,7 +119,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
       >
         <Input
           label={label}
-          startIcon={<CalendarIcon />}
+          startIcon={<CalendarDaysIcon />}
           onClick={() => setIsOpen(true)}
           value={displayValue}
           onChange={(e) => handleInputChange(e.target.value)}

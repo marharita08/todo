@@ -4,27 +4,8 @@ import { Loading } from "@/components/ui/loading";
 import { useTasks } from "@/hooks/use-tasks";
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/components/ui/select";
 import { SortOrder, SortBy, CompletionStatus } from "@/const";
-import { Input } from "@/components/ui/input";
-import { SearchIcon } from "lucide-react";
-
-const getSortOrderToLabelMap = {
-  [SortOrder.ASC]: "Ascending",
-  [SortOrder.DESC]: "Descending",
-} as const;
-
-const getSortByToLabelMap = {
-  [SortBy.CREATED_AT]: "Created At",
-  [SortBy.DUE_DATE]: "Due Date",
-  [SortBy.PRIORITY]: "Priority",
-  [SortBy.TITLE]: "Title",
-} as const;
+import { SearchAndSort } from "./search-and-sort";
 
 const getIsCompleted = (status: CompletionStatus) => {
   switch (status) {
@@ -79,39 +60,14 @@ export const TasksGrid = () => {
             <TabsTrigger value={CompletionStatus.OVERDUE}>Overdue</TabsTrigger>
           </TabsList>
         </Tabs>
-        <Input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          label="Search"
-          isEmpty={!search}
-          startIcon={<SearchIcon className="w-4 h-4" />}
+        <SearchAndSort
+          search={search}
+          setSearch={setSearch}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
         />
-        <Select
-          value={sortBy}
-          onValueChange={(value) => setSortBy(value as SortBy)}
-        >
-          <SelectTrigger label="Sort By" value={sortBy} />
-          <SelectContent>
-            {Object.values(SortBy).map((sortBy) => (
-              <SelectItem key={sortBy} value={sortBy}>
-                {getSortByToLabelMap[sortBy]}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select
-          value={sortOrder}
-          onValueChange={(value) => setSortOrder(value as SortOrder)}
-        >
-          <SelectTrigger label="Sort Order" value={sortOrder} />
-          <SelectContent>
-            {Object.values(SortOrder).map((sortOrder) => (
-              <SelectItem key={sortOrder} value={sortOrder}>
-                {getSortOrderToLabelMap[sortOrder]}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {data?.pages.map((page) =>

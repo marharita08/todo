@@ -6,17 +6,19 @@ import { QueryKey } from "@/const";
 import { taskService } from "@/services/task.service";
 import { toast } from "./use-toast";
 
-export const useCreateTask = () => {
+export const useCreateTask = (defaultToast: boolean = true) => {
   const queryClient = useQueryClient();
 
   return useAppMutation([MutationKey.CREATE_TASK], {
     mutationFn: (task: CreateTaskSchema) => taskService.createTask(task),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.TASKS] });
-      toast({
-        title: "Task created successfully",
-        variant: "success",
-      });
+      if (defaultToast) {
+        toast({
+          title: "Task created successfully",
+          variant: "success",
+        });
+      }
     },
   });
 };
