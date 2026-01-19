@@ -43,15 +43,21 @@ export const UpdateTaskDialog: React.FC<UpdateTaskDialogProps> = ({
     },
   });
 
-  const updateTaskMutation = useUpdateTask(task.id);
+  const updateTaskMutation = useUpdateTask();
 
   const onSubmit = (data: UpdateTaskSchema) => {
-    updateTaskMutation.mutate(data, {
-      onSuccess: () => {
-        onClose();
-        form.reset();
+    updateTaskMutation.mutate(
+      {
+        task: data,
+        id: task.id,
       },
-    });
+      {
+        onSuccess: () => {
+          onClose();
+          form.reset();
+        },
+      },
+    );
   };
 
   return (
@@ -62,7 +68,7 @@ export const UpdateTaskDialog: React.FC<UpdateTaskDialogProps> = ({
         </DialogHeader>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 px-4 py-3"
+          className="flex flex-col gap-6 px-4 py-3"
         >
           <div>
             <Input

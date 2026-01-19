@@ -9,6 +9,8 @@
   --primary: 79 70 229; /* #4F46E5 */
   --primary-foreground: 255 255 255;
 
+  --primary-light: 246, 246, 254; /* #F6F6FE */
+
   --secondary: 20 184 166; /* #14B8A6 */
   --secondary-foreground: 255 255 255;
 
@@ -36,6 +38,8 @@
 
   --color-primary: rgb(var(--primary));
   --color-primary-foreground: rgb(var(--primary-foreground));
+
+  --color-primary-light: rgb(var(--primary-light));
 
   --color-secondary: rgb(var(--secondary));
   --color-secondary-foreground: rgb(var(--secondary-foreground));

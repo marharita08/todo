@@ -23,20 +23,39 @@ import { useTasksStore } from "@/store/task-dialogs.store";
 import { useCreateTask } from "@/hooks/use-create-task";
 import { toast } from "@/hooks/use-toast";
 import { useUpdateTask } from "@/hooks/use-update-task";
+import { useDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 
 interface TaskCardProps {
   task: TaskResponse;
+  isDragable?: boolean;
+  isOverlay?: boolean;
 }
 
-export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
+export const TaskCard: React.FC<TaskCardProps> = ({
+  task,
+  isDragable = false,
+  isOverlay = false,
+}) => {
   const {
     openTaskDetailsDialog,
     openUpdateTaskDialog,
     openConfirmTaskDeletionDialog,
   } = useTasksStore();
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: task.id,
+      data: {
+        task,
+      },
+    });
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+  };
 
   const createTaskMutation = useCreateTask(false);
-  const updateTaskMutation = useUpdateTask(task.id, false);
+  const updateTaskMutation = useUpdateTask(false);
 
   const handleDuplicateTask = () => {
     createTaskMutation.mutate(
@@ -60,7 +79,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   const markAsCompleted = () => {
     updateTaskMutation.mutate(
       {
-        isCompleted: true,
+        task: {
+          isCompleted: true,
+        },
+        id: task.id,
       },
       {
         onSuccess: () => {
@@ -76,7 +98,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   const markAsIncomplete = () => {
     updateTaskMutation.mutate(
       {
-        isCompleted: false,
+        task: {
+          isCompleted: false,
+        },
+        id: task.id,
       },
       {
         onSuccess: () => {
@@ -98,7 +123,18 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   };
 
   return (
-    <div className="border rounded-md px-4 py-3 border-primary/10 bg-primary/5 flex flex-col gap-1">
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
+      className={cn(
+        "border rounded-md px-4 py-3 border-primary/10 bg-primary-light flex flex-col gap-1",
+        isDragable ? "cursor-grab" : "cursor-default",
+        isOverlay && "cursor-grabbing",
+        isDragging && "opacity-0",
+      )}
+    >
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4 min-w-0 flex-1">
           <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -125,7 +161,12 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
               <EllipsisVerticalIcon className="w-4 h-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
+          <DropdownMenuContent
+            onPointerDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          >
             <DropdownMenuItem onClick={() => openTaskDetailsDialog(task)}>
               <div className="flex items-center gap-2">
                 <EyeIcon className="w-4 h-4" />
@@ -162,15 +203,17 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      {task.description && (
-        <div className="text-sm line-clamp-2">{task.description}</div>
-      )}
-      {task.dueDate && (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <CalendarDaysIcon className="w-4 h-4" />
-          {getDateFormatted(task.dueDate)}
-        </div>
-      )}
+      <div>
+        {task.description && (
+          <div className="text-sm line-clamp-2">{task.description}</div>
+        )}
+        {task.dueDate && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <CalendarDaysIcon className="w-4 h-4" />
+            {getDateFormatted(task.dueDate)}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -20,7 +20,7 @@ export const TaskDetailsDialog: React.FC<TaskDetailsDialogProps> = ({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-2xl">{task.title}</DialogTitle>
+          <DialogTitle className="text-2xl px-4">{task.title}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-4 px-4 py-3">
           <div>{task.description}</div>

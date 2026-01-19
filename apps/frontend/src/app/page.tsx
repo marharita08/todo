@@ -9,6 +9,7 @@ import { UpdateTaskDialog } from "./components/update-task-dialog";
 import { useTasksStore } from "@/store/task-dialogs.store";
 import { TaskDetailsDialog } from "@/components/task-details-dialog";
 import { ConfirmTaskDeletionDialog } from "./components/confirm-task-deletion.-dialog";
+import { LayoutGridIcon, SquareKanbanIcon } from "lucide-react";
 
 enum View {
   GRID = "grid",
@@ -56,8 +57,18 @@ export default function Home() {
           <div className="flex justify-between items-center">
             <CreateTaskDialog />
             <TabsList>
-              <TabsTrigger value={View.GRID}>Grid</TabsTrigger>
-              <TabsTrigger value={View.BOARD}>Board</TabsTrigger>
+              <TabsTrigger value={View.GRID}>
+                <div className="flex items-center gap-1">
+                  <LayoutGridIcon className="w-4 h-4" />
+                  Grid
+                </div>
+              </TabsTrigger>
+              <TabsTrigger value={View.BOARD}>
+                <div className="flex items-center gap-1">
+                  <SquareKanbanIcon className="w-4 h-4" />
+                  Board
+                </div>
+              </TabsTrigger>
             </TabsList>
           </div>
           <TabsContent value={View.GRID}>

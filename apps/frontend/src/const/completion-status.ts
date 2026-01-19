@@ -1,6 +1,6 @@
 export enum CompletionStatus {
   ALL = "all",
   COMPLETED = "completed",
-  INCOMPLETED = "incompleted",
+  INCOMPLETE = "incomplete",
   OVERDUE = "overdue",
 }

@@ -43,10 +43,7 @@ export const SearchAndSort: React.FC<SearchAndSortProps> = ({
         value={sortBy}
         onValueChange={(value) => setSortBy(value as SortBy)}
       >
-        <SelectTrigger
-          label="Sort By"
-          value={sortBy}
-        />
+        <SelectTrigger label="Sort By" value={sortBy} />
         <SelectContent>
           {Object.values(SortBy).map((sortBy) => (
             <SelectItem key={sortBy} value={sortBy}>

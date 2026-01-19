@@ -19,6 +19,7 @@ import DatePicker from "@/components/ui/date-picker";
 import { Slider } from "@/components/ui/slider";
 import { useCreateTask } from "@/hooks/use-create-task";
 import { useState } from "react";
+import { PlusIcon } from "lucide-react";
 
 export const CreateTaskDialog = () => {
   const [open, setOpen] = useState(false);
@@ -46,7 +47,10 @@ export const CreateTaskDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button type="button">Create Task</Button>
+        <Button type="button" className="flex items-center gap-1">
+          <PlusIcon className="w-4 h-4" />
+          Create Task
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -54,7 +58,7 @@ export const CreateTaskDialog = () => {
         </DialogHeader>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 px-4 py-3"
+          className="flex flex-col gap-6 px-4 py-3"
         >
           <div>
             <Input

@@ -2,10 +2,12 @@
 import { TaskCard } from "@/components/task-card";
 import { Loading } from "@/components/ui/loading";
 import { useTasks } from "@/hooks/use-tasks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SortOrder, SortBy, CompletionStatus } from "@/const";
 import { SearchAndSort } from "./search-and-sort";
+import { TasksEmpty } from "@/components/tasks-empty";
+import { useInView } from 'react-intersection-observer';
 
 const getIsCompleted = (status: CompletionStatus) => {
   switch (status) {
@@ -13,7 +15,7 @@ const getIsCompleted = (status: CompletionStatus) => {
       return undefined;
     case CompletionStatus.COMPLETED:
       return true;
-    case CompletionStatus.INCOMPLETED:
+    case CompletionStatus.INCOMPLETE:
       return false;
     case CompletionStatus.OVERDUE:
       return false;
@@ -27,13 +29,21 @@ export const TasksGrid = () => {
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.CREATED_AT);
   const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.DESC);
   const [search, setSearch] = useState<string>("");
-  const { data, isLoading, status, isError, isFetchingNextPage } = useTasks({
+  const { data, isLoading, status, isError, isFetchingNextPage, hasNextPage, fetchNextPage } = useTasks({
     isCompleted: getIsCompleted(completionStatus),
     isOverdue: completionStatus === CompletionStatus.OVERDUE,
     sortBy,
     sortOrder,
     search,
   });
+
+  const { ref: observerTarget, inView } = useInView();
+
+  useEffect(() => {
+    if (inView && !isFetchingNextPage && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, inView, hasNextPage, isFetchingNextPage]);
 
   const isEmpty =
     !isError &&
@@ -54,8 +64,8 @@ export const TasksGrid = () => {
             <TabsTrigger value={CompletionStatus.COMPLETED}>
               Completed
             </TabsTrigger>
-            <TabsTrigger value={CompletionStatus.INCOMPLETED}>
-              Incompleted
+            <TabsTrigger value={CompletionStatus.INCOMPLETE}>
+              Incomplete
             </TabsTrigger>
             <TabsTrigger value={CompletionStatus.OVERDUE}>Overdue</TabsTrigger>
           </TabsList>
@@ -73,9 +83,10 @@ export const TasksGrid = () => {
         {data?.pages.map((page) =>
           page.items.map((task) => <TaskCard key={task.id} task={task} />),
         )}
+        <div ref={observerTarget} className="col-span-full" />
       </div>
       {isEmpty && (
-        <div className="text-center text-muted-foreground">No tasks found</div>
+        <TasksEmpty />
       )}
       {(isLoading || status === "pending" || isFetchingNextPage) && <Loading />}
       {isError && (

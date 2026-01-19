@@ -6,11 +6,12 @@ import { QueryKey } from "@/const";
 import { toast } from "./use-toast";
 import { UpdateTask } from "@/types/update-task";
 
-export const useUpdateTask = (id: string, defaultToast: boolean = true) => {
+export const useUpdateTask = (defaultToast: boolean = true) => {
   const queryClient = useQueryClient();
 
   return useAppMutation([MutationKey.UPDATE_TASK], {
-    mutationFn: (task: UpdateTask) => taskService.updateTask(id, task),
+    mutationFn: ({ task, id }: { task: UpdateTask; id: string }) =>
+      taskService.updateTask(id, task),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.TASKS] });
       if (defaultToast) {
